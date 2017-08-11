@@ -120,40 +120,6 @@ void Transform1D(Complex* h0, Complex* W, int N, int start)
         M = M / 2;
         start2 = start;
     } //loop until no more transforms needed (2->1024)
-    
-     /* Complex u,t;
-      Complex ww, wm;
-      int m = 1;
-
-      for(int s = 1; s <= log2(N); s++){
-        m *= 2;
-        wm.real = cos(2*M_PI / m);
-        wm.imag = -sin(2*M_PI / m);
-        for(int k = 0; k <= N - 1; k += m){
-          ww.real = 1;
-          ww.imag = 0;
-          for(int j = start; j <= start + m/2 - 1; j++){
-            pthread_mutex_lock(&arrayMutex);
-            t = ww * h[k+j+m/2];
-            u = h[k + j];
-            h[k + j] = u + t;
-            h[k+j+m/2] = u - t;
-            pthread_mutex_unlock(&arrayMutex);
-
-            if(s==3&&k==0&&m==8){
-              pthread_mutex_lock(&coutMutex);
-              cout<<"ww: "<<ww<<endl;
-              pthread_mutex_unlock(&coutMutex);
-            }
-             ww = ww * wm;  
-          }
-        }
-      }*/
-    /*if(start==0){
-      for(int i = 0; i < 4; i++){
-        cout << h[i] << " ";
-      }
-    }*/
 }
 
 void* Transform2DTHread(void* v)
@@ -285,18 +251,13 @@ int main(int argc, char** argv)
   string fn("Tower.txt"); // default file name
   if (argc > 1) fn = string(argv[1]);  // if name specified on cmd line
   // Threads initialization here
-   
+  
     pthread_mutex_init(&arrayMutex, 0); 
-    //pthread_mutex_init(&arrayMutex2, 0); 
-    //pthread_mutex_init(&arrayMutex3, 0); 
     pthread_mutex_init(&coutMutex, 0);
     pthread_mutex_init(&activeMutex, 0);
     pthread_cond_init(&allDoneCondition, 0);
     totalThreads = 16; //change back to 16
     pthread_barrier_init(&barrier, NULL, totalThreads);
-    //pthread_barrier_init(&barrier2, NULL, totalThreads);
-    //pthread_barrier_init(&barrier3, NULL, totalThreads);
-    //pthread_barrier_init(&barrier4, NULL, totalThreads);
     
   Transform2D(fn.c_str()); // Perform the transform.
 }  
